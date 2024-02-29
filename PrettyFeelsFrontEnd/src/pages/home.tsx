@@ -92,39 +92,6 @@ const HomePage: React.FC = () => {
     return (
         <>
 
-            <div className="offcanvas-menu-overlay" />
-            <div className="offcanvas-menu-wrapper">
-                <div className="offcanvas__close">+</div>
-                <ul className="offcanvas__widget">
-                    <li>
-                        <span className="icon_search search-switch" />
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span className="icon_heart_alt" />
-                            <div className="tip">2</div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span className="icon_bag_alt" />
-                            <div className="tip">2</div>
-                        </a>
-                    </li>
-                </ul>
-                <div className="offcanvas__logo">
-                    <a href="/">
-                        <img src="img/logo.png" alt="" />
-                    </a>
-                </div>
-                <div id="mobile-menu-wrap" />
-                <div className="offcanvas__auth">
-                    <a href="#">Login</a>
-                    <a href="#">Register</a>
-                </div>
-            </div>
-            {/* Offcanvas Menu End */}
-            {/* Header Section Begin */}
             <header className="header">
                 <div className="container-fluid">
                     <div className="row">
@@ -145,21 +112,7 @@ const HomePage: React.FC = () => {
                                         <a href="/shop">Shop</a>
                                     </li>
                                     <li>
-                                        <a href="#">Cart</a>
-                                        {/*<ul className="dropdown">*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./product-details.html">Product Details</a>*/}
-                                        {/*    </li>*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./shop-cart.html">Shop Cart</a>*/}
-                                        {/*    </li>*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./checkout.html">Checkout</a>*/}
-                                        {/*    </li>*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./blog-details.html">Blog Details</a>*/}
-                                        {/*    </li>*/}
-                                        {/*</ul>*/}
+                                        <a href="/admin">Admin</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -167,26 +120,8 @@ const HomePage: React.FC = () => {
                         <div className="col-lg-3">
                             <div className="header__right">
                                 <div className="header__right__auth">
-                                    <a href="/login">Login</a>
-                                    <a href="/login">Register</a>
+                                    <a href="/login">Log out</a>
                                 </div>
-                                <ul className="header__right__widget">
-                                    <li>
-                                        <span className="icon_search search-switch" />
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <span className="icon_heart_alt" />
-                                            <div className="tip">2</div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <span className="icon_bag_alt" />
-                                            <div className="tip">2</div>
-                                        </a>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>
@@ -214,7 +149,6 @@ const HomePage: React.FC = () => {
                                     <div className="categories__item category_men set-bg">
                                         <div className="categories__text">
                                             <h4>Men’s fashion</h4>
-                                            <p>358 items</p>
                                             <a href="#">Shop now</a>
                                         </div>
                                     </div>
@@ -224,7 +158,6 @@ const HomePage: React.FC = () => {
                                     <div className="categories__item category_cosmetic set-bg">
                                         <div className="categories__text">
                                             <h4>Cosmetics</h4>
-                                            <p>159 items</p>
                                             <a href="#">Shop now</a>
                                         </div>
                                     </div>
@@ -239,7 +172,7 @@ const HomePage: React.FC = () => {
             {/* Product Section Begin */}
 
 
-            <div className="pro-dis" style={{display: 'flex', flexWrap: 'wrap', width: '70%', color: 'black'}}>
+            <div className="pro-dis" style={{display: 'flex', flexWrap: 'wrap', width: '100%', color: 'black'}}>
                 {products.map((product) => (
                     <ProductCard key={product.id} product={product} onViewClick={handleViewClick} />
                 ))}

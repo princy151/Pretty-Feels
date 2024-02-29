@@ -24,17 +24,14 @@ interface ProductCardProps {
     product: Product;
     onViewClick: (data: { productId: number; quantity: number }) => void;
 }
-
 // @ts-ignore
 const ProductCard: React.FC<ProductCardProps> = ({ product, onViewClick }) => {
 
     const navigate = useNavigate();
-
-    // @ts-ignore
+// @ts-ignore
     const handleBuyClick = async (product) => {
         try {
             console.log(product)
-            // Navigate to the review page with the updated product list
             navigate(`/review/${product.productId}`);
         } catch (error) {
             console.error('Error handling buy click:', error);
@@ -52,11 +49,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewClick }) => {
         </div>
     );
 };
-
-const Shop: React.FC = () => {
-
+const Shop = () => {
     const [products, setProducts] = useState<Product[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const navigate = useNavigate();
 
 
@@ -71,6 +68,21 @@ const Shop: React.FC = () => {
             .catch((error) => console.error('Error fetching data:', error));
     }, []);
 
+    function filterProducts() {
+        let filteredProducts = products;
+
+        if (selectedCategory) {
+            filteredProducts = filteredProducts.filter((product) => product.category === selectedCategory);
+        }
+
+        if (searchQuery) {
+            filteredProducts = filteredProducts.filter((product) =>
+                product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        return filteredProducts;
+    }
 
     const handleViewClick = (data: { productId: number; quantity: number }) => {
         const selectedProduct = products.find((product) => product.id === data.productId);
@@ -81,6 +93,7 @@ const Shop: React.FC = () => {
         }
     };
 
+    // Use useEffect to navigate after state update
     useEffect(() => {
         // Navigate to the review page when selectedProductId changes
         if (selectedProductId !== null) {
@@ -91,41 +104,9 @@ const Shop: React.FC = () => {
 
 
 
+
     return (
         <>
-            <div className="offcanvas-menu-overlay" />
-            <div className="offcanvas-menu-wrapper">
-                <div className="offcanvas__close">+</div>
-                <ul className="offcanvas__widget">
-                    <li>
-                        <span className="icon_search search-switch" />
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span className="icon_heart_alt" />
-                            <div className="tip">2</div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span className="icon_bag_alt" />
-                            <div className="tip">2</div>
-                        </a>
-                    </li>
-                </ul>
-                <div className="offcanvas__logo">
-                    <a href="/">
-                        <img src="img/logo.png" alt="" />
-                    </a>
-                </div>
-                <div id="mobile-menu-wrap" />
-                <div className="offcanvas__auth">
-                    <a href="#">Login</a>
-                    <a href="#">Register</a>
-                </div>
-            </div>
-            {/* Offcanvas Menu End */}
-            {/* Header Section Begin */}
             <header className="header">
                 <div className="container-fluid">
                     <div className="row">
@@ -146,21 +127,7 @@ const Shop: React.FC = () => {
                                         <a href="/shop">Shop</a>
                                     </li>
                                     <li>
-                                        <a href="#">Cart</a>
-                                        {/*<ul className="dropdown">*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./product-details.html">Product Details</a>*/}
-                                        {/*    </li>*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./shop-cart.html">Shop Cart</a>*/}
-                                        {/*    </li>*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./checkout.html">Checkout</a>*/}
-                                        {/*    </li>*/}
-                                        {/*    <li>*/}
-                                        {/*        <a href="./blog-details.html">Blog Details</a>*/}
-                                        {/*    </li>*/}
-                                        {/*</ul>*/}
+                                        <a href="/admin">Admin</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -168,26 +135,8 @@ const Shop: React.FC = () => {
                         <div className="col-lg-3">
                             <div className="header__right">
                                 <div className="header__right__auth">
-                                    <a href="/login">Login</a>
-                                    <a href="/login">Register</a>
+                                    <a href="/login">Log out</a>
                                 </div>
-                                <ul className="header__right__widget">
-                                    <li>
-                                        <span className="icon_search search-switch" />
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <span className="icon_heart_alt" />
-                                            <div className="tip">2</div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <span className="icon_bag_alt" />
-                                            <div className="tip">2</div>
-                                        </a>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>
@@ -197,129 +146,33 @@ const Shop: React.FC = () => {
                 </div>
             </header>
 
-            <section className="categories">
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-lg-6 p-0">
-                            <div
-                                className="categories__item categories__large__item set-bg">
-                                <div className="categories__text">
-                                    <h1>Women’s fashion</h1>
-                                    <a href="#">Shop now</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-6">
-                            <div className="column">
-                                <div className="col-lg-6 col-md-6 col-sm-6 p-0">
-                                    <div className="categories__item category_men set-bg">
-                                        <div className="categories__text">
-                                            <h4>Men’s fashion</h4>
-                                            <p>358 items</p>
-                                            <a href="#">Shop now</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="col-lg-6 col-md-6 col-sm-6 p-0">
-                                    <div className="categories__item category_cosmetic set-bg">
-                                        <div className="categories__text">
-                                            <h4>Cosmetics</h4>
-                                            <p>159 items</p>
-                                            <a href="#">Shop now</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
+            <div className="bg-pro">
+                <div className="categories">
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('men')}>Men</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('women')}>Women</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('cosmetics')}>Cosmetics</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('ruched')}>Ruched</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('short')}>Short</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('non-slit')}>Non-slit</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('long')}>Long</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('backless')}>Backless</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory(null)}>All</button>
                 </div>
-            </section>
-            {/* Categories Section End */}
-            {/* Product Section Begin */}
 
+                <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="search-inp"/>
 
-            <div className="pro-dis" style={{display: 'flex', flexWrap: 'wrap', width: '70%', color: 'black'}}>
-                {products.map((product) => (
-                    <ProductCard key={product.id} product={product} onViewClick={handleViewClick} />
-                ))}
-            </div>
-
-            {/* Product Section End */}
-
-
-            {/* Services Section Begin */}
-            <section className="services spad">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-3 col-md-4 col-sm-6">
-                            <div className="services__item">
-                                <i className="fa fa-car" />
-                                <h6>Free Shipping</h6>
-                                <p>For all oder over $99</p>
-                            </div>
-                        </div>
-                        <div className="col-lg-3 col-md-4 col-sm-6">
-                            <div className="services__item">
-                                <i className="fa fa-money" />
-                                <h6>Money Back Guarantee</h6>
-                                <p>If good have Problems</p>
-                            </div>
-                        </div>
-                        <div className="col-lg-3 col-md-4 col-sm-6">
-                            <div className="services__item">
-                                <i className="fa fa-support" />
-                                <h6>Online Support 24/7</h6>
-                                <p>Dedicated support</p>
-                            </div>
-                        </div>
-                        <div className="col-lg-3 col-md-4 col-sm-6">
-                            <div className="services__item">
-                                <i className="fa fa-headphones" />
-                                <h6>Payment Secure</h6>
-                                <p>100% secure payment</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            {/* Services Section End */}
-
-            {/* Footer Section Begin */}
-            <footer className="footer">
-                <div className="container">
-                    <div className="row">
-
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-12">
-
-                            <div className="footer__copyright__text">
-                                <p>
-                                    Copyright © All rights reserved
-                                </p>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            {/* Footer Section End */}
-            {/* Search Begin */}
-            <div className="search-model">
-                <div className="h-100 d-flex align-items-center justify-content-center">
-                    <div className="search-close-switch">+</div>
-                    <form className="search-model-form">
-                        <input type="text" id="search-input" placeholder="Search here....." />
-                    </form>
+                <div className="pro-dis" style={{display: 'flex', flexWrap: 'wrap', color: 'black'}}>
+                    {filterProducts().map((product) => (
+                        <ProductCard key={product.id} product={product} onViewClick={handleViewClick}/>
+                    ))}
                 </div>
             </div>
-
-
 </>
-
-
     );
 };
 

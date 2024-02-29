@@ -2,7 +2,6 @@ import axios from "axios";
 import './productaddtable.css';
 import  { useState } from 'react';
 
-
 export interface Product {
     productName: string;
     description: string;
@@ -20,11 +19,11 @@ function ProductAddTable() {
         category: '',
         imageUrl: ''
     });
-    const [isLoading,setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { productName, description, price, category, imageUrl } = formValue;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormValue((prevFormValue) => ({ ...prevFormValue, [name]: value }));
     };
@@ -58,23 +57,24 @@ function ProductAddTable() {
                 <form onSubmit={handleSubmit}>
                     <div className="insideformofaddproduct">
                         <label className='productlabel'>Product Name:</label>
-                        <input className='inputforproduct' name="productName" value={productName} onChange={handleChange}
-                               type="text"
-                        />
+                        <input className='inputforproduct' name="productName" value={productName} onChange={handleChange} type="text" />
                         <label className='productlabel'>Description:</label>
                         <input className='inputforproduct' name="description" value={description} onChange={handleChange} />
                         <label className='productlabel'>Price:</label>
-                        <input className='inputforproduct' name="price"  value={price} onChange={handleChange}
-                               type="number"
-                        />
+                        <input className='inputforproduct' name="price"  value={price} onChange={handleChange} type="number" />
                         <label className='productlabel'>Category:</label>
-                        <input className='inputforproduct' name="category"  value={category} onChange={handleChange}
-                               type="text"
-                        />
+                        <select className='inputforproduct' name="category" value={category} onChange={handleChange}>
+                            <option value="">Select a category</option>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Ruched">Ruched</option>
+                            <option value="Short">Short</option>
+                            <option value="Slit">Slit</option>
+                            <option value="Long">Long</option>
+                            <option value="Backless">Backless</option>
+                        </select>
                         <label className='productlabel'>Image URL:</label>
-                        <input className='inputforproduct' name="imageUrl"  value={imageUrl} onChange={handleChange}
-                               type="text"
-                        />
+                        <input className='inputforproduct' name="imageUrl"  value={imageUrl} onChange={handleChange} type="text" />
                     </div>
                     <button type="submit" className='bttnaddproduct' >{isLoading ? <span>Loading....</span> : 'Add Product'}</button>
                 </form>

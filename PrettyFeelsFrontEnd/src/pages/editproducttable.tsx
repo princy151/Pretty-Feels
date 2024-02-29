@@ -1,76 +1,145 @@
-import axios from "axios";
-import { useState } from 'react';
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import './css/adminpanel.css';
 
-interface Product {
-  productName: string;
-  description: string;
-  price: number;
-  category: string;
-  imageUrl?: string;
-}
+const UpdatePro: React.FC = () => {
+  const [productId, setId] = useState(0);
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState(0);
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
-function ProductAddTable() {
-  const navigate = useNavigate();
-  const [formValue, setFormValue] = useState<Product>({
-    productName: '',
-    description: '',
-    price: 0,
-    category: ''
-  });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
 
-  const { productName, description, price, category } = formValue;
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormValue((prevFormValue) => ({ ...prevFormValue, [name]: value }));
+  const handleSearchClick = () => {
+    const itemName = name;
+    fetch(`http://localhost:8080/item/getByName/${itemName}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch item. Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          setId(data.productId);
+          setName(data.productName);
+          setPrice(data.price);
+          setCategory(data.category);
+          setDescription(data.description);
+          setImageUrl(data.imageUrl);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          // Optionally, handle 404 responses or other errors here
+        });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!productName || !description || !price || !category) {
-      toast.error('Please enter all fields!');
-      return;
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === 'imageUrl') {
+      setImageUrl(e.target.value);
+    } else {
+      setPrice(Number(e.target.value));
     }
+  };
 
-    setIsLoading(true);
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value);
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value);
 
-    try {
-      const res = await axios.post('http://localhost:8080/item/save', formValue);
-      console.log('res', res);
-      toast.success('Product saved successfully!');
-      navigate("/");
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('An error occurred while saving the product.');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleUpdateClick = () => {
+    const updatedData = {
+      productId: productId,
+      productName: name,
+      price: price,
+      category: category,
+      description: description,
+      imageUrl: imageUrl,
+    };
+
+
+    fetch(`http://localhost:8080/item/update`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to update item. Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+
+          console.log('Update successful:', data);
+        })
+        .catch(error => {
+          console.error('Error updating data:', error);
+        });
   };
 
   return (
       <>
-        <div className="form-container">
-          <h2 className="add-product-header">Add Product</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="insideformofaddproduct">
-              <label className='productlabel'>Product Name:</label>
-              <input className='inputforproduct' name="productName" value={productName} onChange={handleChange} type="text" />
-              <label className='productlabel'>Description:</label>
-              <input className='inputforproduct' name="description" value={description} onChange={handleChange} />
-              <label className='productlabel'>Price:</label>
-              <input className='inputforproduct' name="price"  value={price} onChange={handleChange} type="number" />
-              <label className='productlabel'>Category:</label>
-              <input className='inputforproduct' name="category"  value={category} onChange={handleChange} type="text" />
+        <div className="addupdel-bg">
+          <div className="add-holder">
+            <div className="name-div">
+              <label>Name:</label>
+              <input
+                  style={{ width: 600, backgroundColor: "white", color: "black", height: 30, borderColor:'white', marginLeft:47}}
+                  value={name}
+                  onChange={handleNameChange}
+              />
+              <button onClick={handleSearchClick}>Search</button>
             </div>
-            <button type="submit" className='bttnaddproduct' >{isLoading ? <span>Loading....</span> : 'Add Product'}</button>
-          </form>
+
+            <div className="pri-cat">
+              <label>Price:</label>
+              <div className="proro">
+                <input
+                    style={{ width: 250, backgroundColor: "white", color: "black" ,height: 30, borderColor:'white', marginLeft:55}}
+                    value={price}
+                    onChange={handlePriceChange}
+                />
+                <label style={{marginLeft:20}}>Category:</label>
+                <select
+                    style={{ width: 225, backgroundColor: "white", color: "black" ,height: 30, borderColor:'white', marginLeft:15}}
+                    value={category}
+                    onChange={handleCategoryChange}
+                >
+                  <option>Dumbbells</option>
+                  <option>Treadmill</option>
+                  <option>Home Gyms</option>
+                  <option>Jump Ropes</option>
+                  <option>Exercise Bikes</option>
+                  <option>Rowing Machines</option>
+                  <option>Pull Up and Push Up Bar</option>
+                  <option>Core and Abdominal Trainers</option>
+                </select>
+              </div>
+            </div>
+            <div className="des-div">
+              <label>Description:</label>
+              <input
+                  style={{ width: 600, height: 250, backgroundColor: "white", color: "black", borderColor:'white'}}
+                  value={description}
+                  onChange={handleDescriptionChange}
+              />
+            </div>
+            <div className="img-boxx" style={{display:"flex", }}>
+              <label>Image URL:</label>
+              <input
+                  style={{ width: 600, backgroundColor: "white", color: "black", height: 30, borderColor:'white', marginLeft:28 }}
+                  name="imageUrl"
+                  value={imageUrl}
+                  onChange={handlePriceChange}
+              />
+            </div>
+            <button className="add-pro-btn" onClick={handleUpdateClick}>Update</button>
+
+          </div>
         </div>
       </>
   );
-}
+};
 
-export default ProductAddTable;
+export default UpdatePro;
