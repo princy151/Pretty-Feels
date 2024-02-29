@@ -5,6 +5,7 @@ import HomePage from "./pages/home.tsx";
 import Shop from "./pages/shop.tsx";
 import AdminPanel from "./pages/adminpanel.tsx";
 import AdminDashboard from "./pages/admindashboard.tsx";
+import Review from "./pages/review.tsx";
 
 const router = createBrowserRouter(
     [
@@ -31,6 +32,10 @@ const router = createBrowserRouter(
         {
             path:"/admin",
             element : <AdminPanel/>
+        },
+        {
+            path:"/review/:productId",
+            element : <Review/>
         },
 
 

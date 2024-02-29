@@ -92,7 +92,7 @@ const Review: React.FC<ReviewPageProps> = () => {
 
             if (response.ok) {
                 alert('Purchase successful!');
-                navigate('/products');
+                navigate('/');
             } else {
                 console.error('Error processing purchase:', response.status);
             }

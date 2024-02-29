@@ -25,6 +25,7 @@ const AdminDashboard: React.FC = () => {
         setActiveMenuItem(key);
     };
 
+
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider breakpoint="lg" collapsedWidth="0">
@@ -33,6 +34,7 @@ const AdminDashboard: React.FC = () => {
                     theme="dark"
                     mode="inline"
                     defaultSelectedKeys={['1']}
+                    /*@ts-ignore*/
                     onClick={(e) => handleMenuClick(e.key as string)}
                 >
                     <Menu.SubMenu key="3" icon={<ShopOutlined />} title="Products">
@@ -61,7 +63,7 @@ const AdminDashboard: React.FC = () => {
                         {activeMenuItem === '3.1' && <ProductAddForm /> }
                         {activeMenuItem === '3.2' && <ProductUpdate /> }
                         {activeMenuItem === '4.1' && <OrderTracking orders={[]} />}
-                        {activeMenuItem === '4.2' && <OrderUpdate order={null} onUpdateOrder={function (updatedOrder: any): void {
+                        {activeMenuItem === '4.2' && <OrderUpdate order={null} onUpdateOrder={function (): void {
                             throw new Error('Function not implemented.');
                         }} />}
                     </div>

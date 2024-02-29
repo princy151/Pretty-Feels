@@ -23,6 +23,7 @@ interface ProductCardProps {
     onViewClick: (data: { productId: number; quantity: number }) => void;
 }
 
+// @ts-ignore
 const ProductCard: React.FC<ProductCardProps> = ({ product, onViewClick }) => {
 
     const navigate = useNavigate();
