@@ -153,7 +153,7 @@ const Shop = () => {
                     <button className="cteg-btn" onClick={() => setSelectedCategory('cosmetics')}>Cosmetics</button>
                     <button className="cteg-btn" onClick={() => setSelectedCategory('ruched')}>Ruched</button>
                     <button className="cteg-btn" onClick={() => setSelectedCategory('short')}>Short</button>
-                    <button className="cteg-btn" onClick={() => setSelectedCategory('non-slit')}>Non-slit</button>
+                    <button className="cteg-btn" onClick={() => setSelectedCategory('slit')}>Slit</button>
                     <button className="cteg-btn" onClick={() => setSelectedCategory('long')}>Long</button>
                     <button className="cteg-btn" onClick={() => setSelectedCategory('backless')}>Backless</button>
                     <button className="cteg-btn" onClick={() => setSelectedCategory(null)}>All</button>
