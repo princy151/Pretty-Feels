@@ -8,9 +8,8 @@ import {
     EditOutlined,
 } from '@ant-design/icons';
 import './admindashboard.css';
-import OrderTracking from './ordertracking';
+import OrderHistory from './ordertracking';
 import ProductAddForm from './productaddtable';
-import OrderUpdate from './orderupdate';
 import ProductUpdate from './productlisttable';
 import UpdatePro from "./editproducttable.tsx";
 import logo from "./img/logo.png";
@@ -90,10 +89,7 @@ const AdminDashboard: React.FC = () => {
                     </Menu.SubMenu>
                     <Menu.SubMenu key="4" icon={<DropboxOutlined />} title="Orders">
                         <Menu.Item key="4.1" icon={<SolutionOutlined />}>
-                            Track Order
-                        </Menu.Item>
-                        <Menu.Item key="4.2" icon={<EditOutlined />}>
-                            Update Order
+                            Order History
                         </Menu.Item>
                     </Menu.SubMenu>
                 </Menu>
@@ -106,10 +102,7 @@ const AdminDashboard: React.FC = () => {
                         {activeMenuItem === '3.1' && <ProductAddForm /> }
                         {activeMenuItem === '3.2' && <ProductUpdate /> }
                         {activeMenuItem === '3.3' && <UpdatePro /> }
-                        {activeMenuItem === '4.1' && <OrderTracking orders={[]} />}
-                        {activeMenuItem === '4.2' && <OrderUpdate order={null} onUpdateOrder={function (): void {
-                            throw new Error('Function not implemented.');
-                        }} />}
+                        {activeMenuItem === '4.1' && <OrderHistory />}
                     </div>
                 </Content>
             </Layout>

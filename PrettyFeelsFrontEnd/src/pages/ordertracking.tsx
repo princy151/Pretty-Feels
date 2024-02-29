@@ -1,49 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ordertracking.css";
 
 interface Order {
-  id: number;
-  customerName: string;
-  product: string;
-  address: string;
-  amount: number;
-  status: string;
+  orderId: number;
+  productName: string;
+  price: number;
+  quantity: number;
+  total: number;
+  orderDate: string;
 }
 
-interface OrderTrackingProps {
-  orders: Order[];
-}
+const OrderHistory: React.FC = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
 
-const OrderTracking: React.FC<OrderTrackingProps> = ({ orders }) => {
+  useEffect(() => {
+    fetchOrderHistory();
+  }, []);
+
+  const fetchOrderHistory = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/order/history");
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(data);
+      } else {
+        console.error("Failed to fetch order history");
+      }
+    } catch (error) {
+      console.error("Error fetching order history:", error);
+    }
+  };
+
   return (
-    <div className="order-tracking-container">
-      <h2>Order Tracking</h2>
-      <table className="order-table">
-        <thead>
+      <div className="order-tracking-container">
+        <h2>Order History</h2>
+        <table className="order-table">
+          <thead>
           <tr>
             <th>ID</th>
-            <th>Customer</th>
-            <th>Products</th>
-            <th>Address</th>
-            <th>Amount</th>
-            <th>Status</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {orders.map((order) => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.customerName}</td>
-              <td>{order.product}</td>
-              <td>{order.address}</td>
-              <td>{order.amount}</td>
-              <td>{order.status}</td>
-            </tr>
+              <tr key={order.orderId}>
+                <td>{order.orderId}</td>
+                <td>{order.productName}</td>
+                <td>{order.price}</td>
+                <td>{order.quantity}</td>
+                <td>{order.total}</td>
+              </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
   );
 };
 
-export default OrderTracking;
+export default OrderHistory;

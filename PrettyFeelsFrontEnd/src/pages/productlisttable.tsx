@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import './css/productlisttable.css';
 
 interface ItemDTO {
@@ -55,12 +54,9 @@ const ProductListTable: React.FC = () => {
               <tr key={product.itemId}>
                 <td>{product.productName}</td>
                 <td>{product.description}</td>
-                <td>${product.price.toFixed(2)}</td>
+                <td>Rs.{product.price.toFixed(2)}</td>
                 <td>{product.category}</td>
                 <td>
-                  <Link to={`/edit/product/${product.productName}`} className="edit-link">
-                    Edit
-                  </Link>
                   <button onClick={() => handleDeleteTableProduct(product.productName)} className="delete-button">
                     Delete
                   </button>
