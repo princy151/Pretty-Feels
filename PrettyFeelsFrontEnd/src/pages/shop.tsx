@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './css/login.css';
 import './css/bootstrap.min.css';
 import './css/font-awesome.min.css';
@@ -8,8 +8,87 @@ import './css/magnific-popup.css';
 import './css/owl.carousel.min.css';
 import './css/slicknav.min.css';
 import './css/style.css';
+import {useNavigate} from "react-router-dom";
+import logo from "./img/logo.png";
+
+
+interface Product {
+    id: number;
+    productName: string;
+    price: number;
+    category: string;
+    imageUrl: string;
+}
+
+interface ProductCardProps {
+    product: Product;
+    onViewClick: (data: { productId: number; quantity: number }) => void;
+}
+
+// @ts-ignore
+const ProductCard: React.FC<ProductCardProps> = ({ product, onViewClick }) => {
+
+    const navigate = useNavigate();
+
+    // @ts-ignore
+    const handleBuyClick = async (product) => {
+        try {
+            console.log(product)
+            // Navigate to the review page with the updated product list
+            navigate(`/review/${product.productId}`);
+        } catch (error) {
+            console.error('Error handling buy click:', error);
+        }
+    };
+
+
+    return (
+        <div key={product.id} className="product-card">
+            <img src={product.imageUrl} alt={product.productName} className="product-image" />
+            <p className="product-name">{product.productName}</p>
+            <p className="product-price">Price: Rs.{product.price}</p>
+            <p className="product-category">Category: {product.category}</p>
+            <button className="view-button" onClick={() => handleBuyClick(product)}>View</button>
+        </div>
+    );
+};
 
 const Shop: React.FC = () => {
+
+    const [products, setProducts] = useState<Product[]>([]);
+    const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+    const navigate = useNavigate();
+
+
+
+    useEffect(() => {
+        fetch('http://localhost:8080/item/getAll')
+            .then((response) => response.json())
+            .then((data: Product[]) => {
+                console.log(data);  // Log the data to the console
+                setProducts(data);
+            })
+            .catch((error) => console.error('Error fetching data:', error));
+    }, []);
+
+
+    const handleViewClick = (data: { productId: number; quantity: number }) => {
+        const selectedProduct = products.find((product) => product.id === data.productId);
+
+        if (selectedProduct) {
+            setSelectedProductId(data.productId);
+            navigate(`/review/${data.productId}`);
+        }
+    };
+
+    useEffect(() => {
+        // Navigate to the review page when selectedProductId changes
+        if (selectedProductId !== null) {
+            navigate(`/review/${selectedProductId}`);
+        }
+    }, [selectedProductId]);
+
+
 
 
     return (
@@ -35,7 +114,7 @@ const Shop: React.FC = () => {
                     </li>
                 </ul>
                 <div className="offcanvas__logo">
-                    <a href="./index.html">
+                    <a href="/">
                         <img src="img/logo.png" alt="" />
                     </a>
                 </div>
@@ -52,48 +131,36 @@ const Shop: React.FC = () => {
                     <div className="row">
                         <div className="col-xl-3 col-lg-2">
                             <div className="header__logo">
-                                <a href="./index.html">
-                                    <img src="img/logo.png" alt="" />
+                                <a href="/home">
+                                    <img src={logo} width={50} height={50} alt="" />
                                 </a>
                             </div>
                         </div>
                         <div className="col-xl-6 col-lg-7">
                             <nav className="header__menu">
                                 <ul>
-                                    <li>
+                                    <li className="active">
                                         <a href="/home">Home</a>
                                     </li>
                                     <li>
-                                        <a href="#">Women’s</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Men’s</a>
-                                    </li>
-                                    <li className="active">
                                         <a href="/shop">Shop</a>
                                     </li>
                                     <li>
-                                        <a href="#">Pages</a>
-                                        <ul className="dropdown">
-                                            <li>
-                                                <a href="./product-details.html">Product Details</a>
-                                            </li>
-                                            <li>
-                                                <a href="./shop-cart.html">Shop Cart</a>
-                                            </li>
-                                            <li>
-                                                <a href="./checkout.html">Checkout</a>
-                                            </li>
-                                            <li>
-                                                <a href="./blog-details.html">Blog Details</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="./blog.html">Blog</a>
-                                    </li>
-                                    <li>
-                                        <a href="./contact.html">Contact</a>
+                                        <a href="#">Cart</a>
+                                        {/*<ul className="dropdown">*/}
+                                        {/*    <li>*/}
+                                        {/*        <a href="./product-details.html">Product Details</a>*/}
+                                        {/*    </li>*/}
+                                        {/*    <li>*/}
+                                        {/*        <a href="./shop-cart.html">Shop Cart</a>*/}
+                                        {/*    </li>*/}
+                                        {/*    <li>*/}
+                                        {/*        <a href="./checkout.html">Checkout</a>*/}
+                                        {/*    </li>*/}
+                                        {/*    <li>*/}
+                                        {/*        <a href="./blog-details.html">Blog Details</a>*/}
+                                        {/*    </li>*/}
+                                        {/*</ul>*/}
                                     </li>
                                 </ul>
                             </nav>
@@ -101,8 +168,8 @@ const Shop: React.FC = () => {
                         <div className="col-lg-3">
                             <div className="header__right">
                                 <div className="header__right__auth">
-                                    <a href="#">Login</a>
-                                    <a href="#">Register</a>
+                                    <a href="/login">Login</a>
+                                    <a href="/login">Register</a>
                                 </div>
                                 <ul className="header__right__widget">
                                     <li>
@@ -129,897 +196,117 @@ const Shop: React.FC = () => {
                     </div>
                 </div>
             </header>
-            {/* Header Section End */}
-            {/* Breadcrumb Begin */}
-            <div className="breadcrumb-option">
-                <div className="container">
+
+            <section className="categories">
+                <div className="container-fluid">
                     <div className="row">
-                        <div className="col-lg-12">
-                            <div className="breadcrumb__links">
-                                <a href="/home">
-                                    <i className="fa fa-home" /> Home
-                                </a>
-                                <span>Shop</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {/* Breadcrumb End */}
-            {/* Shop Section Begin */}
-            <section className="shop spad">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-3 col-md-3">
-                            <div className="shop__sidebar">
-                                <div className="sidebar__categories">
-                                    <div className="section-title">
-                                        <h4>Categories</h4>
-                                    </div>
-                                    <div className="categories__accordion">
-                                        <div className="accordion" id="accordionExample">
-                                            <div className="card">
-                                                <div className="card-heading active">
-                                                    <a data-toggle="collapse" data-target="#collapseOne">
-                                                        Women
-                                                    </a>
-                                                </div>
-                                                <div
-                                                    id="collapseOne"
-                                                    className="collapse show"
-                                                    data-parent="#accordionExample"
-                                                >
-                                                    <div className="card-body">
-                                                        <ul>
-                                                            <li>
-                                                                <a href="#">Coats</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jackets</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Dresses</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">T-shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jeans</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="card">
-                                                <div className="card-heading">
-                                                    <a data-toggle="collapse" data-target="#collapseTwo">
-                                                        Men
-                                                    </a>
-                                                </div>
-                                                <div
-                                                    id="collapseTwo"
-                                                    className="collapse"
-                                                    data-parent="#accordionExample"
-                                                >
-                                                    <div className="card-body">
-                                                        <ul>
-                                                            <li>
-                                                                <a href="#">Coats</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jackets</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Dresses</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">T-shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jeans</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="card">
-                                                <div className="card-heading">
-                                                    <a data-toggle="collapse" data-target="#collapseThree">
-                                                        Kids
-                                                    </a>
-                                                </div>
-                                                <div
-                                                    id="collapseThree"
-                                                    className="collapse"
-                                                    data-parent="#accordionExample"
-                                                >
-                                                    <div className="card-body">
-                                                        <ul>
-                                                            <li>
-                                                                <a href="#">Coats</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jackets</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Dresses</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">T-shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jeans</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="card">
-                                                <div className="card-heading">
-                                                    <a data-toggle="collapse" data-target="#collapseFour">
-                                                        Accessories
-                                                    </a>
-                                                </div>
-                                                <div
-                                                    id="collapseFour"
-                                                    className="collapse"
-                                                    data-parent="#accordionExample"
-                                                >
-                                                    <div className="card-body">
-                                                        <ul>
-                                                            <li>
-                                                                <a href="#">Coats</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jackets</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Dresses</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">T-shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jeans</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="card">
-                                                <div className="card-heading">
-                                                    <a data-toggle="collapse" data-target="#collapseFive">
-                                                        Cosmetic
-                                                    </a>
-                                                </div>
-                                                <div
-                                                    id="collapseFive"
-                                                    className="collapse"
-                                                    data-parent="#accordionExample"
-                                                >
-                                                    <div className="card-body">
-                                                        <ul>
-                                                            <li>
-                                                                <a href="#">Coats</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jackets</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Dresses</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">T-shirts</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#">Jeans</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="sidebar__filter">
-                                    <div className="section-title">
-                                        <h4>Shop by price</h4>
-                                    </div>
-                                    <div className="filter-range-wrap">
-                                        <div
-                                            className="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                                            data-min={33}
-                                            data-max={99}
-                                        />
-                                        <div className="range-slider">
-                                            <div className="price-input">
-                                                <p>Price:</p>
-                                                <input type="text" id="minamount" />
-                                                <input type="text" id="maxamount" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a href="#">Filter</a>
-                                </div>
-                                <div className="sidebar__sizes">
-                                    <div className="section-title">
-                                        <h4>Shop by size</h4>
-                                    </div>
-                                    <div className="size__list">
-                                        <label htmlFor="xxs">
-                                            xxs
-                                            <input type="checkbox" id="xxs" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="xs">
-                                            xs
-                                            <input type="checkbox" id="xs" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="xss">
-                                            xs-s
-                                            <input type="checkbox" id="xss" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="s">
-                                            s
-                                            <input type="checkbox" id="s" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="m">
-                                            m
-                                            <input type="checkbox" id="m" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="ml">
-                                            m-l
-                                            <input type="checkbox" id="ml" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="l">
-                                            l
-                                            <input type="checkbox" id="l" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="xl">
-                                            xl
-                                            <input type="checkbox" id="xl" />
-                                            <span className="checkmark" />
-                                        </label>
-                                    </div>
-                                </div>
-                                <div className="sidebar__color">
-                                    <div className="section-title">
-                                        <h4>Shop by size</h4>
-                                    </div>
-                                    <div className="size__list color__list">
-                                        <label htmlFor="black">
-                                            Blacks
-                                            <input type="checkbox" id="black" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="whites">
-                                            Whites
-                                            <input type="checkbox" id="whites" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="reds">
-                                            Reds
-                                            <input type="checkbox" id="reds" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="greys">
-                                            Greys
-                                            <input type="checkbox" id="greys" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="blues">
-                                            Blues
-                                            <input type="checkbox" id="blues" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="beige">
-                                            Beige Tones
-                                            <input type="checkbox" id="beige" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="greens">
-                                            Greens
-                                            <input type="checkbox" id="greens" />
-                                            <span className="checkmark" />
-                                        </label>
-                                        <label htmlFor="yellows">
-                                            Yellows
-                                            <input type="checkbox" id="yellows" />
-                                            <span className="checkmark" />
-                                        </label>
-                                    </div>
+                        <div className="col-lg-6 p-0">
+                            <div
+                                className="categories__item categories__large__item set-bg">
+                                <div className="categories__text">
+                                    <h1>Women’s fashion</h1>
+                                    <a href="#">Shop now</a>
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-9 col-md-9">
-                            <div className="row">
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-1.jpg"
-                                        >
-                                            <div className="label new">New</div>
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-1.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Furry hooded parka</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">$ 59.0</div>
+                        <div className="col-lg-6">
+                            <div className="column">
+                                <div className="col-lg-6 col-md-6 col-sm-6 p-0">
+                                    <div className="categories__item category_men set-bg">
+                                        <div className="categories__text">
+                                            <h4>Men’s fashion</h4>
+                                            <p>358 items</p>
+                                            <a href="#">Shop now</a>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-2.jpg"
-                                        >
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-2.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Flowy striped skirt</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">$ 49.0</div>
+
+                                <div className="col-lg-6 col-md-6 col-sm-6 p-0">
+                                    <div className="categories__item category_cosmetic set-bg">
+                                        <div className="categories__text">
+                                            <h4>Cosmetics</h4>
+                                            <p>159 items</p>
+                                            <a href="#">Shop now</a>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-3.jpg"
-                                        >
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-3.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Croc-effect bag</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">$ 59.0</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-4.jpg"
-                                        >
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-4.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Dark wash Xavi jeans</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">$ 59.0</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item sale">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-5.jpg"
-                                        >
-                                            <div className="label">Sale</div>
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-5.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Ankle-cuff sandals</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">
-                                                $ 49.0 <span>$ 59.0</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-6.jpg"
-                                        >
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-6.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Contrasting sunglasses</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">$ 59.0</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-7.jpg"
-                                        >
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-7.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Circular pendant earrings</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">$ 59.0</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-8.jpg"
-                                        >
-                                            <div className="label stockout stockblue">Out Of Stock</div>
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-8.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Cotton T-Shirt</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">$ 59.0</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-md-6">
-                                    <div className="product__item sale">
-                                        <div
-                                            className="product__item__pic set-bg"
-                                            data-setbg="img/shop/shop-9.jpg"
-                                        >
-                                            <div className="label">Sale</div>
-                                            <ul className="product__hover">
-                                                <li>
-                                                    <a href="img/shop/shop-9.jpg" className="image-popup">
-                                                        <span className="arrow_expand" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_heart_alt" />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="icon_bag_alt" />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="product__item__text">
-                                            <h6>
-                                                <a href="#">Water resistant zips backpack</a>
-                                            </h6>
-                                            <div className="rating">
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                                <i className="fa fa-star" />
-                                            </div>
-                                            <div className="product__price">
-                                                $ 49.0 <span>$ 59.0</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-12 text-center">
-                                    <div className="pagination__option">
-                                        <a href="#">1</a>
-                                        <a href="#">2</a>
-                                        <a href="#">3</a>
-                                        <a href="#">
-                                            <i className="fa fa-angle-right" />
-                                        </a>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-            {/* Shop Section End */}
-            {/* Instagram Begin */}
-            <div className="instagram">
-                <div className="container-fluid">
+            {/* Categories Section End */}
+            {/* Product Section Begin */}
+
+
+            <div className="pro-dis" style={{display: 'flex', flexWrap: 'wrap', width: '70%', color: 'black'}}>
+                {products.map((product) => (
+                    <ProductCard key={product.id} product={product} onViewClick={handleViewClick} />
+                ))}
+            </div>
+
+            {/* Product Section End */}
+
+
+            {/* Services Section Begin */}
+            <section className="services spad">
+                <div className="container">
                     <div className="row">
-                        <div className="col-lg-2 col-md-4 col-sm-4 p-0">
-                            <div
-                                className="instagram__item set-bg"
-                                data-setbg="img/instagram/insta-1.jpg"
-                            >
-                                <div className="instagram__text">
-                                    <i className="fa fa-instagram" />
-                                    <a href="#">@ ashion_shop</a>
-                                </div>
+                        <div className="col-lg-3 col-md-4 col-sm-6">
+                            <div className="services__item">
+                                <i className="fa fa-car" />
+                                <h6>Free Shipping</h6>
+                                <p>For all oder over $99</p>
                             </div>
                         </div>
-                        <div className="col-lg-2 col-md-4 col-sm-4 p-0">
-                            <div
-                                className="instagram__item set-bg"
-                                data-setbg="img/instagram/insta-2.jpg"
-                            >
-                                <div className="instagram__text">
-                                    <i className="fa fa-instagram" />
-                                    <a href="#">@ ashion_shop</a>
-                                </div>
+                        <div className="col-lg-3 col-md-4 col-sm-6">
+                            <div className="services__item">
+                                <i className="fa fa-money" />
+                                <h6>Money Back Guarantee</h6>
+                                <p>If good have Problems</p>
                             </div>
                         </div>
-                        <div className="col-lg-2 col-md-4 col-sm-4 p-0">
-                            <div
-                                className="instagram__item set-bg"
-                                data-setbg="img/instagram/insta-3.jpg"
-                            >
-                                <div className="instagram__text">
-                                    <i className="fa fa-instagram" />
-                                    <a href="#">@ ashion_shop</a>
-                                </div>
+                        <div className="col-lg-3 col-md-4 col-sm-6">
+                            <div className="services__item">
+                                <i className="fa fa-support" />
+                                <h6>Online Support 24/7</h6>
+                                <p>Dedicated support</p>
                             </div>
                         </div>
-                        <div className="col-lg-2 col-md-4 col-sm-4 p-0">
-                            <div
-                                className="instagram__item set-bg"
-                                data-setbg="img/instagram/insta-4.jpg"
-                            >
-                                <div className="instagram__text">
-                                    <i className="fa fa-instagram" />
-                                    <a href="#">@ ashion_shop</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-2 col-md-4 col-sm-4 p-0">
-                            <div
-                                className="instagram__item set-bg"
-                                data-setbg="img/instagram/insta-5.jpg"
-                            >
-                                <div className="instagram__text">
-                                    <i className="fa fa-instagram" />
-                                    <a href="#">@ ashion_shop</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-2 col-md-4 col-sm-4 p-0">
-                            <div
-                                className="instagram__item set-bg"
-                                data-setbg="img/instagram/insta-6.jpg"
-                            >
-                                <div className="instagram__text">
-                                    <i className="fa fa-instagram" />
-                                    <a href="#">@ ashion_shop</a>
-                                </div>
+                        <div className="col-lg-3 col-md-4 col-sm-6">
+                            <div className="services__item">
+                                <i className="fa fa-headphones" />
+                                <h6>Payment Secure</h6>
+                                <p>100% secure payment</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {/* Instagram End */}
+            </section>
+            {/* Services Section End */}
+
             {/* Footer Section Begin */}
             <footer className="footer">
                 <div className="container">
                     <div className="row">
-                        <div className="col-lg-4 col-md-6 col-sm-7">
-                            <div className="footer__about">
-                                <div className="footer__logo">
-                                    <a href="./index.html">
-                                        <img src="img/logo.png" alt="" />
-                                    </a>
-                                </div>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                    eiusmod tempor incididunt cilisis.
-                                </p>
-                                <div className="footer__payment">
-                                    <a href="#">
-                                        <img src="img/payment/payment-1.png" alt="" />
-                                    </a>
-                                    <a href="#">
-                                        <img src="img/payment/payment-2.png" alt="" />
-                                    </a>
-                                    <a href="#">
-                                        <img src="img/payment/payment-3.png" alt="" />
-                                    </a>
-                                    <a href="#">
-                                        <img src="img/payment/payment-4.png" alt="" />
-                                    </a>
-                                    <a href="#">
-                                        <img src="img/payment/payment-5.png" alt="" />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-2 col-md-3 col-sm-5">
-                            <div className="footer__widget">
-                                <h6>Quick links</h6>
-                                <ul>
-                                    <li>
-                                        <a href="#">About</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Blogs</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Contact</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">FAQ</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="col-lg-2 col-md-3 col-sm-4">
-                            <div className="footer__widget">
-                                <h6>Account</h6>
-                                <ul>
-                                    <li>
-                                        <a href="#">My Account</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Orders Tracking</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Checkout</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Wishlist</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-8 col-sm-8">
-                            <div className="footer__newslatter">
-                                <h6>NEWSLETTER</h6>
-                                <form action="#">
-                                    <input type="text" placeholder="Email" />
-                                    <button type="submit" className="site-btn">
-                                        Subscribe
-                                    </button>
-                                </form>
-                                <div className="footer__social">
-                                    <a href="#">
-                                        <i className="fa fa-facebook" />
-                                    </a>
-                                    <a href="#">
-                                        <i className="fa fa-twitter" />
-                                    </a>
-                                    <a href="#">
-                                        <i className="fa fa-youtube-play" />
-                                    </a>
-                                    <a href="#">
-                                        <i className="fa fa-instagram" />
-                                    </a>
-                                    <a href="#">
-                                        <i className="fa fa-pinterest" />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
-                            {/* Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. */}
+
                             <div className="footer__copyright__text">
                                 <p>
-                                    Copyright © All rights reserved | This template is made with{" "}
-                                    <i className="fa fa-heart" aria-hidden="true" /> by{" "}
-                                    <a href="https://colorlib.com" target="_blank">
-                                        Colorlib
-                                    </a>
+                                    Copyright © All rights reserved
                                 </p>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </footer>
+            {/* Footer Section End */}
+            {/* Search Begin */}
             <div className="search-model">
                 <div className="h-100 d-flex align-items-center justify-content-center">
                     <div className="search-close-switch">+</div>
@@ -1029,7 +316,8 @@ const Shop: React.FC = () => {
                 </div>
             </div>
 
-        </>
+
+</>
 
 
     );
