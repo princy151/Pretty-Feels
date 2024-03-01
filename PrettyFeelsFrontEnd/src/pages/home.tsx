@@ -139,7 +139,7 @@ const HomePage: React.FC = () => {
                                 className="categories__item categories__large__item set-bg">
                                 <div className="categories__text">
                                     <h1>Women’s fashion</h1>
-                                    <a href="#">Shop now</a>
+                                    <a href="/women">Shop now</a>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +149,7 @@ const HomePage: React.FC = () => {
                                     <div className="categories__item category_men set-bg">
                                         <div className="categories__text">
                                             <h4>Men’s fashion</h4>
-                                            <a href="#">Shop now</a>
+                                            <a href="/men">Shop now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +158,7 @@ const HomePage: React.FC = () => {
                                     <div className="categories__item category_cosmetic set-bg">
                                         <div className="categories__text">
                                             <h4>Cosmetics</h4>
-                                            <a href="#">Shop now</a>
+                                            <a href="/cos">Shop now</a>
                                         </div>
                                     </div>
                                 </div>

@@ -49,9 +49,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewClick }) => {
         </div>
     );
 };
-const Shop = () => {
+const Shopwomen = () => {
     const [products, setProducts] = useState<Product[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedCategory] = useState<string | null>('Women');
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const navigate = useNavigate();
@@ -147,17 +147,6 @@ const Shop = () => {
             </header>
 
             <div className="bg-pro">
-                <div className="categories">
-                    <button className="cteg-btn" onClick={() => setSelectedCategory('Men')}>Men</button>
-                    <button className="cteg-btn" onClick={() => setSelectedCategory('Women')}>Women</button>
-                    <button className="cteg-btn" onClick={() => setSelectedCategory('Cosmetics')}>Cosmetics</button>
-                    {/*<button className="cteg-btn" onClick={() => setSelectedCategory('Ruched')}>Ruched</button>*/}
-                    {/*<button className="cteg-btn" onClick={() => setSelectedCategory('Short')}>Short</button>*/}
-                    {/*<button className="cteg-btn" onClick={() => setSelectedCategory('Slit')}>Slit</button>*/}
-                    {/*<button className="cteg-btn" onClick={() => setSelectedCategory('Long')}>Long</button>*/}
-                    {/*<button className="cteg-btn" onClick={() => setSelectedCategory('Backless')}>Backless</button>*/}
-                    <button className="cteg-btn" onClick={() => setSelectedCategory(null)}>All</button>
-                </div>
 
                 <input
                     type="text"
@@ -171,9 +160,11 @@ const Shop = () => {
                         <ProductCard key={product.id} product={product} onViewClick={handleViewClick}/>
                     ))}
                 </div>
+
+                <a href="/shop"> View all products</a>
             </div>
-</>
+        </>
     );
 };
 
-export default Shop;
+export default Shopwomen;

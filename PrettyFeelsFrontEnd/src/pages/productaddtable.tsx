@@ -67,11 +67,8 @@ function ProductAddTable() {
                             <option value="">Select a category</option>
                             <option value="Men">Men</option>
                             <option value="Women">Women</option>
-                            <option value="Ruched">Ruched</option>
-                            <option value="Short">Short</option>
-                            <option value="Slit">Slit</option>
-                            <option value="Long">Long</option>
-                            <option value="Backless">Backless</option>
+                            <option value="Cosmetics">Cosmetics</option>
+
                         </select>
                         <label className='productlabel'>Image URL:</label>
                         <input className='inputforproduct' name="imageUrl"  value={imageUrl} onChange={handleChange} type="text" />

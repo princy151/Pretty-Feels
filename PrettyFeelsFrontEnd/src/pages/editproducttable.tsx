@@ -106,14 +106,11 @@ const UpdatePro: React.FC = () => {
                     value={category}
                     onChange={handleCategoryChange}
                 >
-                  <option>Dumbbells</option>
-                  <option>Treadmill</option>
-                  <option>Home Gyms</option>
-                  <option>Jump Ropes</option>
-                  <option>Exercise Bikes</option>
-                  <option>Rowing Machines</option>
-                  <option>Pull Up and Push Up Bar</option>
-                  <option>Core and Abdominal Trainers</option>
+                  <option value="">Select a category</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                  <option value="Cosmetics">Cosmetics</option>
+
                 </select>
               </div>
             </div>

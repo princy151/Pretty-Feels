@@ -5,6 +5,9 @@ import HomePage from "./pages/home.tsx";
 import Shop from "./pages/shop.tsx";
 import AdminDashboard from "./pages/admindashboard.tsx";
 import Review from "./pages/review.tsx";
+import Shopmen from "./pages/men.tsx";
+import Shopwomen from "./pages/women.tsx";
+import Shopcos from "./pages/cosmetics.tsx";
 
 const router = createBrowserRouter(
     [
@@ -32,6 +35,18 @@ const router = createBrowserRouter(
         {
             path:"/review/:productId",
             element : <Review/>
+        },
+        {
+            path:"/men",
+            element : <Shopmen/>
+        },
+        {
+            path:"/women",
+            element : <Shopwomen/>
+        },
+        {
+            path:"/cos",
+            element : <Shopcos/>
         },
 
 
